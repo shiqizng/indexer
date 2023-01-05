@@ -2,7 +2,7 @@
 //go:build !nopostgres
 // +build !nopostgres
 
-package postgres
+package cockroach
 
 import (
 	"context"
@@ -12,11 +12,11 @@ import (
 	"github.com/jackc/pgx/v4"
 
 	"github.com/algorand/indexer/idb"
+	"github.com/algorand/indexer/idb/cockroach/internal/encoding"
+	cad "github.com/algorand/indexer/idb/cockroach/internal/migrations/convert_account_data"
+	"github.com/algorand/indexer/idb/cockroach/internal/schema"
+	"github.com/algorand/indexer/idb/cockroach/internal/types"
 	"github.com/algorand/indexer/idb/migration"
-	"github.com/algorand/indexer/idb/postgres/internal/encoding"
-	cad "github.com/algorand/indexer/idb/postgres/internal/migrations/convert_account_data"
-	"github.com/algorand/indexer/idb/postgres/internal/schema"
-	"github.com/algorand/indexer/idb/postgres/internal/types"
 )
 
 func init() {

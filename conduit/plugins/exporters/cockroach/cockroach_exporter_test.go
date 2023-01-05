@@ -26,7 +26,7 @@ import (
 )
 
 var pgsqlConstructor = exporters.ExporterConstructorFunc(func() exporters.Exporter {
-	return &postgresqlExporter{}
+	return &cockroachdbExporter{}
 })
 var logger *logrus.Logger
 var round = basics.Round(0)
@@ -123,7 +123,7 @@ func TestPostgresqlExporterInit(t *testing.T) {
 
 func TestUnmarshalConfigsContainingDeleteTask(t *testing.T) {
 	// configured delete task
-	pgsqlExp := postgresqlExporter{}
+	pgsqlExp := cockroachdbExporter{}
 	cfg := ExporterConfig{
 		ConnectionString: "",
 		MaxConn:          0,
@@ -140,7 +140,7 @@ func TestUnmarshalConfigsContainingDeleteTask(t *testing.T) {
 	assert.Equal(t, uint64(3000), pgsqlExp.cfg.Delete.Rounds)
 
 	// delete task with fields default to 0
-	pgsqlExp = postgresqlExporter{}
+	pgsqlExp = cockroachdbExporter{}
 	cfg = ExporterConfig{
 		ConnectionString: "",
 		MaxConn:          0,
@@ -154,7 +154,7 @@ func TestUnmarshalConfigsContainingDeleteTask(t *testing.T) {
 	assert.Equal(t, uint64(0), pgsqlExp.cfg.Delete.Rounds)
 
 	// delete task with negative interval
-	pgsqlExp = postgresqlExporter{}
+	pgsqlExp = cockroachdbExporter{}
 	cfg = ExporterConfig{
 		ConnectionString: "",
 		MaxConn:          0,
@@ -169,7 +169,7 @@ func TestUnmarshalConfigsContainingDeleteTask(t *testing.T) {
 	assert.Equal(t, -1, int(pgsqlExp.cfg.Delete.Interval))
 
 	// delete task with negative round
-	pgsqlExp = postgresqlExporter{}
+	pgsqlExp = cockroachdbExporter{}
 	cfgstr := "test: true\ndelete-task:\n  rounds: -1\n  interval: 2"
 	assert.ErrorContains(t, pgsqlExp.unmarhshalConfig(cfgstr), "unmarshal errors")
 

@@ -7,9 +7,12 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/algorand/indexer/importer"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 
+	"github.com/algorand/go-algorand/data/bookkeeping"
+	"github.com/algorand/go-algorand/ledger/ledgercore"
 	"github.com/algorand/indexer/conduit"
 	"github.com/algorand/indexer/conduit/plugins"
 	"github.com/algorand/indexer/conduit/plugins/exporters"
@@ -17,16 +20,12 @@ import (
 	"github.com/algorand/indexer/data"
 	"github.com/algorand/indexer/idb"
 	// Necessary to ensure the postgres implementation has been registered in the idb factory
-	_ "github.com/algorand/indexer/idb/postgres"
-	"github.com/algorand/indexer/importer"
-
-	"github.com/algorand/go-algorand/data/bookkeeping"
-	"github.com/algorand/go-algorand/ledger/ledgercore"
+	_ "github.com/algorand/indexer/idb/cockroach"
 )
 
 const exporterName = "cockroach"
 
-type postgresqlExporter struct {
+type cockroachdbExporter struct {
 	round  uint64
 	cfg    ExporterConfig
 	db     idb.IndexerDb
@@ -42,18 +41,18 @@ var sampleConfig string
 
 var metadata = conduit.Metadata{
 	Name:         exporterName,
-	Description:  "Exporter for writing data to a postgresql instance.",
+	Description:  "Exporter for writing data to a cockroachDB cluster.",
 	Deprecated:   false,
 	SampleConfig: sampleConfig,
 }
 
-func (exp *postgresqlExporter) Metadata() conduit.Metadata {
+func (exp *cockroachdbExporter) Metadata() conduit.Metadata {
 	return metadata
 }
 
-func (exp *postgresqlExporter) Init(ctx context.Context, initProvider data.InitProvider, cfg plugins.PluginConfig, logger *logrus.Logger) error {
+func (exp *cockroachdbExporter) Init(ctx context.Context, initProvider data.InitProvider, cfg plugins.PluginConfig, logger *logrus.Logger) error {
 	exp.ctx, exp.cf = context.WithCancel(ctx)
-	dbName := "postgres"
+	dbName := "cockroachdb"
 	exp.logger = logger
 	if err := cfg.UnmarshalConfig(&exp.cfg); err != nil {
 		return fmt.Errorf("connect failure in unmarshalConfig: %v", err)
@@ -100,12 +99,12 @@ func (exp *postgresqlExporter) Init(ctx context.Context, initProvider data.InitP
 	return nil
 }
 
-func (exp *postgresqlExporter) Config() string {
+func (exp *cockroachdbExporter) Config() string {
 	ret, _ := yaml.Marshal(exp.cfg)
 	return string(ret)
 }
 
-func (exp *postgresqlExporter) Close() error {
+func (exp *cockroachdbExporter) Close() error {
 	if exp.db != nil {
 		exp.db.Close()
 	}
@@ -115,7 +114,7 @@ func (exp *postgresqlExporter) Close() error {
 	return nil
 }
 
-func (exp *postgresqlExporter) Receive(exportData data.BlockData) error {
+func (exp *cockroachdbExporter) Receive(exportData data.BlockData) error {
 	if exportData.Delta == nil {
 		if exportData.Round() == 0 {
 			exportData.Delta = &ledgercore.StateDelta{}
@@ -147,12 +146,12 @@ func (exp *postgresqlExporter) Receive(exportData data.BlockData) error {
 	return nil
 }
 
-func (exp *postgresqlExporter) unmarhshalConfig(cfg string) error {
+func (exp *cockroachdbExporter) unmarhshalConfig(cfg string) error {
 	return yaml.Unmarshal([]byte(cfg), &exp.cfg)
 }
 
 func init() {
 	exporters.Register(exporterName, exporters.ExporterConstructorFunc(func() exporters.Exporter {
-		return &postgresqlExporter{}
+		return &cockroachdbExporter{}
 	}))
 }

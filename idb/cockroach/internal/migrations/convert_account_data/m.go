@@ -9,7 +9,7 @@ import (
 
 	"github.com/jackc/pgx/v4"
 
-	"github.com/algorand/indexer/idb/postgres/internal/encoding"
+	"github.com/algorand/indexer/idb/cockroach/internal/encoding"
 )
 
 type aad struct {

@@ -198,6 +198,7 @@ func importFile(fname string, imp Importer, l *log.Logger, genesisPath string) (
 func EnsureInitialImport(db idb.IndexerDb, genesis sdk.Genesis) (bool, error) {
 	_, err := db.GetNextRoundToAccount()
 	// Exit immediately or crash if we don't see ErrorNotInitialized.
+	//fmt.Printf("error: %v\n", err)
 	if err != idb.ErrorNotInitialized {
 		if err != nil {
 			return false, fmt.Errorf("getting import state, %v", err)

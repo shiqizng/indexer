@@ -1,4 +1,4 @@
-package dummy
+package cockroach
 
 import (
 	log "github.com/sirupsen/logrus"
@@ -6,21 +6,19 @@ import (
 	"github.com/algorand/indexer/idb"
 )
 
-type dummyFactory struct {
+type cockroachFactory struct {
 }
 
 // Name is part of the IndexerFactory interface.
-func (df dummyFactory) Name() string {
-	return "dummy"
+func (cf cockroachFactory) Name() string {
+	return "cockroachdb"
 }
 
 // Build is part of the IndexerFactory interface.
-func (df dummyFactory) Build(arg string, opts idb.IndexerDbOptions, log *log.Logger) (idb.IndexerDb, chan struct{}, error) {
-	ch := make(chan struct{})
-	close(ch)
-	return &dummyIndexerDb{log: log}, ch, nil
+func (cf cockroachFactory) Build(arg string, opts idb.IndexerDbOptions, log *log.Logger) (idb.IndexerDb, chan struct{}, error) {
+	return Init(arg, opts, log)
 }
 
 func init() {
-	idb.RegisterFactory("dummy", &dummyFactory{})
+	idb.RegisterFactory("cockroachdb", &cockroachFactory{})
 }

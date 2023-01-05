@@ -7,7 +7,7 @@ import (
 	"github.com/algorand/go-codec/codec"
 
 	"github.com/algorand/indexer/idb"
-	"github.com/algorand/indexer/idb/postgres/internal/types"
+	"github.com/algorand/indexer/idb/cockroach/internal/types"
 	itypes "github.com/algorand/indexer/types"
 	"github.com/algorand/indexer/util"
 

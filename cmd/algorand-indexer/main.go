@@ -73,6 +73,7 @@ var rootCmd = &cobra.Command{
 
 var (
 	postgresAddr   string
+	cockroachAddr  string
 	dummyIndexerDb bool
 	doVersion      bool
 	profFile       io.WriteCloser
@@ -84,6 +85,10 @@ var (
 func indexerDbFromFlags(opts idb.IndexerDbOptions) (idb.IndexerDb, chan struct{}, error) {
 	if postgresAddr != "" {
 		db, ch, err := idb.IndexerDbByName("postgres", postgresAddr, opts, logger)
+		maybeFail(err, "could not init db, %v", err)
+		return db, ch, nil
+	} else if cockroachAddr != "" {
+		db, ch, err := idb.IndexerDbByName("cockroachdb", cockroachAddr, opts, logger)
 		maybeFail(err, "could not init db, %v", err)
 		return db, ch, nil
 	}

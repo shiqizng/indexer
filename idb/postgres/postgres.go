@@ -59,7 +59,6 @@ func OpenPostgres(connection string, opts idb.IndexerDbOptions, log *log.Logger)
 	}
 
 	db, err := pgxpool.ConnectConfig(context.Background(), postgresConfig)
-
 	if err != nil {
 		return nil, nil, fmt.Errorf("connecting to postgres: %v", err)
 	}
