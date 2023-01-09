@@ -19,6 +19,7 @@ import (
 	"github.com/algorand/indexer/api/generated/v2"
 	"github.com/algorand/indexer/conduit"
 	"github.com/algorand/indexer/conduit/pipeline"
+	_ "github.com/algorand/indexer/conduit/plugins/exporters/cockroach"
 	_ "github.com/algorand/indexer/conduit/plugins/exporters/postgresql"
 	_ "github.com/algorand/indexer/conduit/plugins/importers/algod"
 	_ "github.com/algorand/indexer/conduit/plugins/processors/blockprocessor"
@@ -393,10 +394,18 @@ func makeConduitConfig(dCfg *daemonConfig, nextRound uint64) pipeline.Config {
 				},
 			},
 		},
+		//Exporter: pipeline.NameConfigPair{
+		//	Name: "postgresql",
+		//	Config: map[string]interface{}{
+		//		"connection-string": postgresAddr,
+		//		"max-conn":          dCfg.maxConn,
+		//		"test":              dummyIndexerDb,
+		//	},
+		//},
 		Exporter: pipeline.NameConfigPair{
-			Name: "postgresql",
+			Name: "cockroach",
 			Config: map[string]interface{}{
-				"connection-string": postgresAddr,
+				"connection-string": cockroachAddr,
 				"max-conn":          dCfg.maxConn,
 				"test":              dummyIndexerDb,
 			},

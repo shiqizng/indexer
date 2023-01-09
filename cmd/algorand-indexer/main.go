@@ -132,6 +132,7 @@ func init() {
 		cmd.Flags().StringVarP(&logLevel, "loglevel", "l", "info", "verbosity of logs: [error, warn, info, debug, trace]")
 		cmd.Flags().StringVarP(&logFile, "logfile", "f", "", "file to write logs to, if unset logs are written to standard out")
 		cmd.Flags().StringVarP(&postgresAddr, "postgres", "P", "", "connection string for postgres database")
+		cmd.Flags().StringVarP(&cockroachAddr, "cockroach", "C", "", "connection string for cockroach database")
 		cmd.Flags().BoolVarP(&dummyIndexerDb, "dummydb", "n", false, "use dummy indexer db")
 		cmd.Flags().BoolVarP(&doVersion, "version", "v", false, "print version and exit")
 	}
