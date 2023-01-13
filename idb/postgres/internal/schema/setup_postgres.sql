@@ -1,4 +1,4 @@
--- This file is setup_postgres.sql which gets compiled into go source using a go:generate statement in postgres.go
+-- This file is setup_cockroachdb.sql which gets compiled into go source using a go:generate statement in postgres.go
 --
 -- TODO? replace all 'addr bytea' with 'addr_id bigint' and a mapping table? makes addrs an 8 byte int that fits in a register instead of a 32 byte string
 

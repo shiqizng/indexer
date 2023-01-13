@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/algorand/indexer/idb/cockroach/internal/schema"
 	"github.com/jackc/pgx/v4"
 
 	"github.com/algorand/indexer/helpers"
 	"github.com/algorand/indexer/idb"
 	"github.com/algorand/indexer/idb/cockroach/internal/encoding"
-	"github.com/algorand/indexer/idb/cockroach/schema"
 	"github.com/algorand/indexer/types"
 
 	sdk "github.com/algorand/go-algorand-sdk/types"

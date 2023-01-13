@@ -16,7 +16,6 @@ import (
 	"github.com/algorand/indexer/conduit"
 	"github.com/algorand/indexer/conduit/plugins"
 	"github.com/algorand/indexer/conduit/plugins/exporters"
-	"github.com/algorand/indexer/conduit/plugins/exporters/postgresql/util"
 	"github.com/algorand/indexer/data"
 	"github.com/algorand/indexer/idb"
 	// Necessary to ensure the postgres implementation has been registered in the idb factory
@@ -33,7 +32,6 @@ type cockroachdbExporter struct {
 	wg     sync.WaitGroup
 	ctx    context.Context
 	cf     context.CancelFunc
-	dm     util.DataManager
 }
 
 //go:embed sample.yaml
@@ -90,12 +88,6 @@ func (exp *cockroachdbExporter) Init(ctx context.Context, initProvider data.Init
 	}
 	exp.round = uint64(initProvider.NextDBRound())
 
-	// if data pruning is enabled
-	if !exp.cfg.Test && exp.cfg.Delete.Rounds > 0 {
-		exp.dm = util.MakeDataManager(exp.ctx, &exp.cfg.Delete, exp.db, logger)
-		exp.wg.Add(1)
-		go exp.dm.DeleteLoop(&exp.wg, &exp.round)
-	}
 	return nil
 }
 

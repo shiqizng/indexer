@@ -1,9 +1,8 @@
-// Code generated from source setup_postgres.sql via go generate. DO NOT EDIT.
+// SQL copied from setup_cockroachdb. This can be automated in the future.
 
 package schema
 
-const SetupPostgresSql = `-- This file is setup_postgres.sql which gets compiled into go source using a go:generate statement in postgres.go
---
+const SetupCockroachSql = `
 -- TODO? replace all 'addr bytea' with 'addr_id bigint' and a mapping table? makes addrs an 8 byte int that fits in a register instead of a 32 byte string
 
 SET default_int_size = 8;
@@ -76,7 +75,7 @@ CREATE INDEX IF NOT EXISTS account_asset_by_addr_partial ON account_asset(addr) 
 -- Optional, to make queries of all asset balances fast /v2/assets/<assetid>/balances
 -- CREATE INDEX CONCURRENTLY IF NOT EXISTS account_asset_asset ON account_asset (assetid, addr ASC);
 
--- data.basics.AccountData AssetParams[index] AssetParams{}
+-- data.basics.AccountData AssetParams[id] AssetParams{}
 CREATE TABLE IF NOT EXISTS asset (
   id bigint PRIMARY KEY,
   creator_addr bytea NOT NULL,
