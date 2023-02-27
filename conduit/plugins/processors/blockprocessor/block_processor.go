@@ -4,8 +4,10 @@ import (
 	"context"
 	_ "embed" // used to embed config
 	"fmt"
+	"os"
 	"time"
 
+	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
@@ -357,6 +359,11 @@ func prepareAccountsResources(l *indexerledger.LedgerForEvaluator, payset transa
 	return accounts, resources, nil
 }
 
+type LegercoreValidatedBlock struct {
+	Blk   bookkeeping.Block
+	Delta ledgercore.StateDelta
+}
+
 // MakeBlockProcessorHandlerAdapter makes an adapter function that emulates original behavior of block processor
 func MakeBlockProcessorHandlerAdapter(proc *BlockProcessor, handler func(block *ledgercore.ValidatedBlock) error) func(cert *rpcs.EncodedBlockCert) error {
 	return func(cert *rpcs.EncodedBlockCert) error {
@@ -366,7 +373,14 @@ func MakeBlockProcessorHandlerAdapter(proc *BlockProcessor, handler func(block *
 		}
 
 		vb := blockData.ValidatedBlock()
+		out := LegercoreValidatedBlock{
+			Blk:   vb.Block(),
+			Delta: vb.Delta(),
+		}
 
+		fn := "/Users/shiqi/projects/indexer/api/test_resources/validated_blocks/encoding.vb"
+		f, _ := os.OpenFile(fn, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		f.Write(msgpack.Encode(out))
 		if handler != nil {
 			err = handler(&vb)
 			if err != nil {
